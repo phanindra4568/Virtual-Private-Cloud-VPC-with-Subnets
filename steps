@@ -1,0 +1,129 @@
+AWS Cloud – VPC + Linux Server Notes
+📌 1️⃣ AWS VPC Basics
+
+VPC (Virtual Private Cloud):
+A logically isolated network in AWS where you can launch cloud resources.
+
+CIDR Block:
+Defines IP range (e.g., 10.0.0.0/16)
+
+Subnets:
+Divide VPC into smaller networks
+
+Public Subnet: Internet access allowed
+
+Private Subnet: Isolated from the internet
+
+Internet Gateway (IGW):
+A gateway that connects VPC to the internet
+
+📌 2️⃣ Create a Custom VPC
+Setting	Value
+VPC Name	My-VPC
+IPv4 CIDR	10.0.0.0/16
+📌 3️⃣ Create Subnets in VPC
+Subnet	CIDR	Public IP	Purpose
+Public Subnet	10.0.1.0/24	Enabled ✅	Web/SSH access
+Private Subnet	10.0.2.0/24	Disabled ❌	Databases/Backend
+
+✔ Public subnet routes to internet
+❌ Private subnet has no direct internet
+
+📌 4️⃣ Internet Connectivity
+
+Steps:
+
+Create Internet Gateway → Attach to VPC
+
+Create Public Route Table
+
+Add route:
+
+0.0.0.0/0 → Internet Gateway
+
+
+Associate with Public Subnet
+
+Private Route Table:
+
+No Internet Gateway route
+
+📌 5️⃣ Security Concepts
+
+Security Groups
+
+Virtual firewall for EC2 instances
+
+Controls inbound & outbound traffic
+
+Example rules:
+
+Type	Port	Source	Purpose
+SSH	22	My IP	Connect to server
+HTTP	80	Anywhere	Websites
+
+NACLs (Network ACLs)
+
+Subnet-level firewall
+
+Stateless
+
+🖥️ Launch Linux Server in Public Subnet
+📌 Steps:
+
+Go to EC2 → Launch Instance
+
+Select Amazon Linux 2 or Ubuntu AMI
+
+Instance Type: t2.micro (Free-Tier)
+
+Network settings:
+
+VPC: My-VPC
+
+Subnet: public-subnet
+
+Auto-assign Public IP: ✅ Enabled
+
+Security Group:
+
+Allow SSH (port 22) from your IP
+
+Create & download key pair
+
+Launch instance 🎉
+
+📌 Connect to Linux Server (SSH)
+
+From your Linux / Mac terminal:
+
+ssh -i "mykey.pem" ec2-user@<Public-IP>
+
+
+For Ubuntu AMI:
+
+ssh -i "mykey.pem" ubuntu@<Public-IP>
+
+
+If using Windows, connect using:
+✅ Git Bash
+✅ PuTTY
+✅ Windows Terminal (SSH support)
+
+🔍 Verify Public vs Private Access
+Instance Location	Expected Result
+Public Subnet	✅ Ping internet / update packages
+Private Subnet	❌ No internet (without NAT gateway)
+
+Test command:
+
+ping google.com
+
+🧠 Key Takeaways
+Component	Purpose
+VPC	Your private cloud network
+Public Subnet	Hosts publicly accessible resources
+Private Subnet	Secure, internal services
+Internet Gateway	Public Internet access
+Security Group	Instance-level traffic protection
+Route Tables	Define network routing rules
